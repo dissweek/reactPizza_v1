@@ -21,6 +21,7 @@ function Home() {
   const {searchValue} = useContext(SearchContext)
   const search = searchValue ? `&search=${searchValue}` : ''
   
+  console.log('first')
 
   useEffect(()=>{
     if(window.location.search){
