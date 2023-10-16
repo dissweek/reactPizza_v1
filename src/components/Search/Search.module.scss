@@ -1,0 +1,33 @@
+.search{
+    display: flex;
+    position: relative;
+    
+    &_input{
+        font-size: 18px;
+        padding: 7px 40px;
+        border-radius: 30px;
+        border: 1px solid black;
+    }
+
+    &_svgFind{
+        width: 22px;
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.5;
+    }
+
+    &_svgClose{
+        width: 22px;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.5;
+        cursor: pointer;
+        &:hover{
+            opacity: 0.9;
+        }
+    }
+}
