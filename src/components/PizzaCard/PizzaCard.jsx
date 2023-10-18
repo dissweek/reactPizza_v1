@@ -1,17 +1,33 @@
 import React, { useState } from "react";
+import { addProduct } from "../../redux/slices/cartSlice";
+import { useSelector, useDispatch } from "react-redux";
 
-function PizzaCard(props) {
+function PizzaCard({id,imageUrl,price,sizes,title,types,rating,category}) {
+  const dispacth = useDispatch();
   const [activeType, setActiveType] = useState(0);
   const [activeSize, setActiveSize] = useState(0);
   const PIZZA_TYPES = ["тонкое", "традиционное"];
+  const pizzaCount = useSelector((state) => state.cart.items.find(obj => obj.id === id))
+console.log(pizzaCount)
+  const onClickAddItem = () => {
+    const item = {
+      id,
+      imageUrl,
+      price,
+      sizes: sizes[activeSize],
+      title,
+      types:PIZZA_TYPES[activeType],
+    };
+    dispacth(addProduct(item))
+  };
 
   return (
     <div className="pizza-block">
-      <img className="pizza-block__image" src={props.imageUrl} alt="Pizza" />
-      <h4 className="pizza-block__title">{props.title}</h4>
+      <img className="pizza-block__image" src={imageUrl} alt="Pizza" />
+      <h4 className="pizza-block__title">{title}</h4>
       <div className="pizza-block__selector">
         <ul>
-          {props.types.map((item, index) => {
+          {types.map((item, index) => {
             return (
               <li
                 key={index}
@@ -24,7 +40,7 @@ function PizzaCard(props) {
           })}
         </ul>
         <ul>
-          {props.sizes.map((item, index) => {
+          {sizes.map((item, index) => {
             return (
               <li
                 key={index}
@@ -38,8 +54,8 @@ function PizzaCard(props) {
         </ul>
       </div>
       <div className="pizza-block__bottom">
-        <div className="pizza-block__price">от {props.price} ₽</div>
-        <div className="button button--outline button--add">
+        <div className="pizza-block__price">от {price} ₽</div>
+        <div onClick={onClickAddItem} className="button button--outline button--add">
           <svg
             width="12"
             height="12"
@@ -53,7 +69,7 @@ function PizzaCard(props) {
             />
           </svg>
           <span>Добавить</span>
-          <i>2</i>
+          <i>{pizzaCount ? pizzaCount.count : '0'}</i>
         </div>
       </div>
     </div>

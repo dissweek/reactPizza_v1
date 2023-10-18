@@ -1,14 +1,14 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSelector, useDispatch } from 'react-redux'
 import { setActiveSort } from "../../redux/slices/filterSlice";
 
 export const POPUP_LIST =[
    {
-     name:'популярности ↑',
+     name:'по пулярности ↑',
      sort:'rating&order=asc'
    },
    {
-     name:'популярности ↓',
+     name:'по пулярности ↓',
      sort:'rating&order=desc'
    },
    {
@@ -32,17 +32,26 @@ export const POPUP_LIST =[
 function Sort(){
   const activeSort = useSelector(state => state.filter.sort)
   const dispatch = useDispatch()
+  const sortRef= useRef()
 
   const [active,setActive] = useState(false)
-
 
   const onClickActiveSort = (item) =>{
    dispatch(setActiveSort(item));
     setActive(false)
   }
 
+  useEffect(()=>{
+    const clickNotSort = (event) =>{
+      !event.composedPath().includes(sortRef.current) && setActive(false)
+    }
+    document.body.addEventListener('click',clickNotSort)
+
+    return () => document.body.removeEventListener('click',clickNotSort)
+  },[])
+
   return(
-      <div className="sort">
+      <div className="sort" ref={sortRef}>
               <div className="sort__label">
                 <svg style={active ?  {transform:`rotate(180deg)`} : {transform:`rotate(0deg)`}}
                   width="10"
