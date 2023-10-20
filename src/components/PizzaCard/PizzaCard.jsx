@@ -8,7 +8,6 @@ function PizzaCard({id,imageUrl,price,sizes,title,types,rating,category}) {
   const [activeSize, setActiveSize] = useState(0);
   const PIZZA_TYPES = ["тонкое", "традиционное"];
   const pizzaCount = useSelector((state) => state.cart.items.find(obj => obj.id === id))
-console.log(pizzaCount)
   const onClickAddItem = () => {
     const item = {
       id,
@@ -69,7 +68,8 @@ console.log(pizzaCount)
             />
           </svg>
           <span>Добавить</span>
-          <i>{pizzaCount ? pizzaCount.count : '0'}</i>
+          {pizzaCount && <i>{pizzaCount.count}</i>}
+          
         </div>
       </div>
     </div>

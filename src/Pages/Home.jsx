@@ -1,41 +1,36 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { SearchContext } from "../App";
-import { setActiveCategories, setFilters } from "../redux/slices/filterSlice";
-
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import qs from "qs";
-
 import Categories from "../components/Categories/Categories";
 import Sort, { POPUP_LIST } from "../components/Sort/Sort";
 import PizzaCard from "../components/PizzaCard/PizzaCard";
 import Skeleton from "../components/PizzaCard/Skeleton";
-import axios from "axios";
+import { setActiveCategories, setFilters } from "../redux/slices/filterSlice";
+import { getFetchPizza } from "../redux/slices/pizzaSlice";
 
 function Home() {
   const navigate = useNavigate();
   const dispacth = useDispatch();
   const { activeCategories, sort } = useSelector((state) => state.filter);
-  const [pizzalist, setPizzaList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const category = activeCategories;
+  const {items,status}  =  useSelector((state) => state.pizza)
   const { searchValue } = useContext(SearchContext);
+  const category = activeCategories;
   const search = searchValue ? `&search=${searchValue}` : "";
   const urlParams = useRef(false);
   const isMounted = useRef(false)
+  const localCart = useSelector((state)=> state.cart)
 
-  const getPizzas = () => {
-    setIsLoading(true);
-    axios
-      .get(
-        `https://6525cd0a67cfb1e59ce7af29.mockapi.io/Items?${
-          category ? `category=${activeCategories}` : ""
-        }&sortBy=${sort.sort}${search}`
-      )
-      .then((res) => {
-        setPizzaList(res.data);
-        setIsLoading(false);
-      });
+  const getPizzas = async () => {
+    dispacth(getFetchPizza({
+      category,
+      search,
+      sort,
+      activeCategories
+    }));
+
+    window.scrollTo(0,0)
   };
 
   //Если был первый рендер и изменились параметры то сохраняем их в Redux
@@ -63,8 +58,7 @@ function Home() {
     window.scrollTo(0, 0);
     !urlParams.current && getPizzas();
     urlParams.current = false;
-    }, [activeCategories, sort, searchValue]);
-
+  }, [activeCategories, sort, searchValue]);
 
   return (
     <>
@@ -78,9 +72,9 @@ function Home() {
         </div>
         <h2 className="content__title">Все пиццы</h2>
         <div className="content__items">
-          {isLoading
+          {status == 'loading'
             ? [...new Array(12)].map((item, index) => <Skeleton key={index} />)
-            : pizzalist.map((item, index) => (
+            : items.map((item, index) => (
                 <PizzaCard key={item.id} {...item} />
               ))}
         </div>
